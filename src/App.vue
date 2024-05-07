@@ -9,6 +9,9 @@ useHead({
   ],
   title: 'BoLi',
 })
+
+const isDark = useDark()
+isDark.value = true
 </script>
 
 <template>

@@ -10,12 +10,14 @@ jcsa
 jcsb
 noopener
 nprogress
+persistedstate
 pinia
 refact
 shiki
 Shiki
 sizecheck
 taze
+tinycolor
 typecheck
 unhead
 unocss
@@ -24,3 +26,4 @@ vite
 vitesse
 vueuse
 webfont
+yxxx

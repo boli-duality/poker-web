@@ -39,7 +39,11 @@
     "markdown",
     "json",
     "jsonc",
-    "yaml"
+    "yaml",
+    "less",
+    "scss",
+    "css",
+    "postcss"
   ],
   "cSpell.customDictionaries": {
     "custom-dictionary-workspace": {

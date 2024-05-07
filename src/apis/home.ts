@@ -1,4 +1,4 @@
-import request from '~/utils/request'
+import request from '~/libs/request'
 
 /** 首页 - 发现 */
 export function getHome() {

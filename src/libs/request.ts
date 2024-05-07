@@ -1,6 +1,5 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import { ApiPromise } from '~/functions'
 
 // 服务器错误处理
 const errMsg: ObjectT = {
@@ -56,5 +55,5 @@ instance.interceptors.response.use(
 )
 
 export default function request(options: AxiosRequestConfig) {
-  return new ApiPromise((resolve, reject) => instance(options).then(res => resolve(res)).catch(err => reject(err)))
+  return new Promise((resolve, reject) => instance(options).then(res => resolve(res)).catch(err => reject(err)))
 }

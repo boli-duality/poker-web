@@ -8,7 +8,6 @@ export default definePreset(() => {
     ],
     rules: [
       [/^drag-(.*)$/, ([_, drag]) => ({ '-webkit-user-drag': drag })],
-      [/^bgc-(.*)$/, ([_, color]) => ({ 'background-color': color })],
       // [/^m([\.\d]+)(\D*)$/, ([_, num, unit]) => ({ margin: num + (unit || 'px') })],
       // [/^mx([\.\d]+)(\D*)$/, ([_, num, unit]) => ({ margin: `0 ${num + (unit || 'px')}` })],
       // [/^my([\.\d]+)(\D*)$/, ([_, num, unit]) => ({ margin: `${num + (unit || 'px')} 0` })],
