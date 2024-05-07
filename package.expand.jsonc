@@ -1,0 +1,81 @@
+{
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@8.8.0",
+  "scripts": {
+    "dev": "vite --port 3333 --open",
+    "build": "vite-ssg build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "preview-https": "serve dist",
+    "test": "vitest",
+    "test:e2e": "cypress open",
+    "test:unit": "vitest",
+    "typecheck": "vue-tsc --noEmit",
+    "up": "taze major -I",
+    "postinstall": "npx simple-git-hooks",
+    "sizecheck": "npx vite-bundle-visualizer"
+  },
+  "dependencies": {
+    "@unhead/vue": "^1.7.4", // 动态修改head标签内容
+    "@unocss/reset": "^0.56.4", // unocss 重置样式
+    "@vueuse/core": "^10.4.1", // vueuse
+    "@vueuse/head": "^2.0.0", // 动态修改head标签内容，现在迁徙到 @unhead/vue
+    "nprogress": "^0.2.0", // 进度条
+    "pinia": "^2.1.6", // 全局状态管理
+    "vue": "^3.3.4", // vue3
+    "vue-demi": "^0.14.6", // 构建vue2/3通用组件
+    "vue-i18n": "^9.4.1", // 国际化
+    "vue-router": "^4.2.5" // 路由
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^1.0.0-beta.12", // eslint配置
+    "@iconify-json/carbon": "^1.1.21", // css图标 carbon库 https://icon-sets.iconify.design/carbon/
+    "@intlify/unplugin-vue-i18n": "^1.2.0", // 国际化预编译 https://www.npmjs.com/package/@intlify/unplugin-vue-i18n
+    "@types/markdown-it-link-attributes": "^3.0.2",
+    "@types/nprogress": "^0.2.1",
+    "@unocss/eslint-config": "^0.56.4", // unocss的eslint配置 https://alfred-skyblue.github.io/unocss-docs-cn/integrations/eslint
+    "@vitejs/plugin-vue": "^4.3.4", // vite的vue编译插件
+    "@vue-macros/volar": "^0.15.0", // volar插件 支持unplugin-vue-macros
+    "@vue/test-utils": "^2.4.1", // 测试工具
+    "critters": "^0.0.20", // 优化css加载
+    "cross-env": "^7.0.3", // 运行跨平台设置和使用环境变量的脚本
+    "cypress": "^13.3.0", // 测试框架
+    "cypress-vite": "^1.4.2", // 测试框架
+    "eslint": "^8.50.0", // 代码格式化
+    "eslint-plugin-cypress": "^2.15.1", // 代码格式化 cypress插件
+    "https-localhost": "^4.7.1", // 是本地域名为https协议
+    "lint-staged": "^14.0.1", // git提交时规范代码
+    "markdown-it-link-attributes": "^4.0.1", // markdown解析器插件
+    "markdown-it-shiki": "^0.9.0", // Shiki 的 markdown-it插件
+    "pnpm": "^8.8.0",
+    "rollup": "^3.29.3",
+    "shiki": "^0.14.4", // Shiki使用Text-Mate语法来标记字符串，并通过VSCode主题为标记着色
+    "simple-git-hooks": "^2.9.0", // git提交时钩子
+    "taze": "^0.11.3", // npm包更新工具
+    "typescript": "^5.2.2",
+    "unocss": "^0.56.4", // css原子化引擎
+    "unplugin-auto-import": "^0.16.6", // 自动导入变量
+    "unplugin-vue-components": "^0.25.2", // 自动导入组件
+    "unplugin-vue-macros": "^2.6.0", // vue 编译器宏
+    "unplugin-vue-markdown": "^0.24.3", // 编译Markdown到Vue组件
+    "vite": "^4.4.9",
+    "vite-bundle-visualizer": "^0.10.0", // 打包视图分析
+    "vite-plugin-inspect": "^0.7.38", // 帮助你检查 Vite 插件的中间状态
+    "vite-plugin-pages": "^0.31.0", // 基于文件系统的路由
+    "vite-plugin-pwa": "^0.16.5", // pwa
+    "vite-plugin-vue-devtools": "^1.0.0-rc.5", // vue devtools的vite集成
+    "vite-plugin-vue-layouts": "^0.8.0", // 自动加载布局模板
+    "vite-plugin-webfont-dl": "^3.7.6", // 收集网络字体链接，从Vite项目导入和定义，下载scs和字体文件（隐私优先），将字体添加到捆绑包中（或通过dev-server提供
+    "vite-ssg": "^0.23.3", // 静态站点生成
+    "vite-ssg-sitemap": "^0.5.1", // 使用Sitemap ts与vite ssg一起工作的Sitemap生成器
+    "vitest": "^0.34.5", // 由 Vite 提供支持的极速单元测试框架
+    "vue-tsc": "^1.8.15" // vue-ts sfc编译器
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}
