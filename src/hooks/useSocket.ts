@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
 
-const ws = io('localhost:3000', { transports: ['websocket'] })
+const ws = io('http://61.164.243.106:34055/', { transports: ['websocket'] })
 
 const state = reactive({ chat: {} as ObjectT<UseSocket.ChatData[]> })
 
