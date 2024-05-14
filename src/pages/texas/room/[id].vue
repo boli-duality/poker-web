@@ -1,31 +1,14 @@
 <script setup lang="ts">
-import { io } from 'socket.io-client'
+import { useJokerPoker } from '~/hooks/usePoker'
 
-const socket = io('localhost:3000', { transports: ['websocket'] })
+const { params } = useRoute('/texas/room/[id]')
+const userStore = useUserStore()
 
-socket.emit('createSocket', 'cici', (res: any) => {
-  console.log('createSocket', res)
-})
-
-socket.on('play', (res) => {
-  console.log('play', res)
-})
-
-const poker = reactive(new JokerPoker())
-
-const nickname = ref('')
-
-function joinGame() {
-  if (nickname.value) poker.addPlayer(nickname.value)
-}
-
-function startGame() {
-  poker.startGame()
-}
+const poker = useJokerPoker(params.id, userStore.user)
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center justify-center">
+  <div v-if="poker" class="flex flex-1 flex-col items-center justify-center">
     <!-- 桌子 -->
     <div class="desk-wrap pos-relative">
       <div class="publish-wrap pos-absolute left-50% top-50% h-92px w-342px flex translate--50% b b-#000 b-solid">
@@ -42,11 +25,11 @@ function startGame() {
           :style="{ transform: `translateX(-50%) rotate(${360 / poker.players.length * index}deg)`, transformOrigin: '50% -290px' }"
         >
           <div class="player-state pos-absolute bottom--60px text-20px c-white fw-bold">
-            {{ player.name }}
+            {{ player.nickname }}
           </div>
           <div class="h-90px w-130px flex">
             <img
-              v-for="(card, index) in player.startingHand" :key="index"
+              v-for="(card, cardIdx) in player.startingHand" :key="cardIdx"
               class="card h-90px w-60px b b-#a6a6a6 rd-6px b-solid drag-none"
               :src="`/poker/${card.suit}-${card.rank}.png`"
             >
@@ -54,21 +37,21 @@ function startGame() {
         </div>
       </div>
     </div>
-    <div class="panel pos-fixed right-20px top-20px flex flex-col items-center p-30px">
-      <label class="mb-30px flex items-center"><div class="flex-shrink-0">昵称：</div><el-input v-model="nickname" placeholder="请输入昵称" /></label>
-      <div>
-        <el-button class="mb" plain @click="joinGame">
-          加入游戏
-        </el-button>
-      </div>
-      <div>
-        <el-button plain @click="startGame">
-          开始游戏
-        </el-button>
-      </div>
-      <!-- <button v-if="poker.players[0].name === nickname">
+    <div v-if="userStore.user.id == poker.owner.id" class="panel pos-fixed right-20px top-20px flex flex-col items-center p-30px">
+      <el-button type="primary">
         开始游戏
-      </button> -->
+      </el-button>
+    </div>
+    <div class="panel users pos-fixed bottom-20px left-20px top-20px w-300px overflow-auto p-10px">
+      <el-button class="mb" type="primary" plain>
+        房间名：{{ poker.name }}
+      </el-button>
+      <div v-for="(user, index) in poker.users" :key="index" class="panel user mb20px h150px flex justify-between p10px">
+        <div>{{ user.nickname }}</div>
+        <el-button v-if="user.id == poker.owner.id" type="warning" size="small" plain>
+          房主
+        </el-button>
+      </div>
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 // 服务器错误处理
 const errMsg: ObjectT = {
@@ -38,15 +39,20 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => {
     const { status, data } = response
-    if (status === 200) {
-      switch (data.code) {
-        case 200:
-          return data.data
-        default:
+    switch (status) {
+      case 200:
+      case 201:
+        if (data.err) {
+          ElMessage.error(data.msg)
           throw new Error(data)
-      }
+        }
+        ElMessage.success(data.msg)
+        return data.data
+
+      default:
+        ElMessage.error(errMsg[status])
+        throw new Error(data)
     }
-    else { throw new Error(errMsg[status]) }
   },
   (error) => {
     console.error(`err${error}`) // for debug

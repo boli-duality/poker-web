@@ -1,3 +1,4 @@
+// 在尽可能保持js特性的情况下使用ts
 import antfu from '@antfu/eslint-config'
 
 export default antfu(
@@ -8,9 +9,8 @@ export default antfu(
     rules: {
       'ts/no-use-before-define': 'off',
       'vue/eqeqeq': 'off',
-      'antfu/if-newline': 'off',
+      'eqeqeq': 'off',
       'no-console': 'warn',
-      'curly': 'off',
     },
   },
 )

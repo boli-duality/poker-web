@@ -1,31 +1,65 @@
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
+
 const router = useRouter()
 const userStore = useUserStore()
-const { state, socket } = useSocket()
+const { state, socket } = useChatSocket()
 
-const nickname = ref('')
+const form = reactive({
+  nickname: '',
+  password: '',
+})
+function resetForm() {
+  loginPopShow.value = false
+  registerPopShow.value = false
+  Object.assign(form, { nickname: '', password: '' })
+}
+const registerPopShow = ref(false)
 const loginPopShow = ref(false)
 
-function login() {
-  if (!nickname.value) {
-    return ElMessage({
-      message: '请输入昵称',
-      type: 'warning',
-    })
-  }
-  userStore.login(nickname.value)
+function openRegisterPop() {
   loginPopShow.value = false
-  nickname.value = ''
+  registerPopShow.value = true
 }
-function editNickname() {
+async function register() {
+  if (!form.nickname)
+    return ElMessage.warning('请输入用户名')
+  if (!form.password)
+    return ElMessage.warning('请输入密码')
+  const [err] = await useAwait(userStore.register(form))
+  if (err)
+    return
+  resetForm()
+}
+
+function openLoginPop() {
+  registerPopShow.value = false
   loginPopShow.value = true
-  nickname.value = userStore.nickname
+}
+async function login() {
+  if (!form.nickname)
+    return ElMessage.warning('请输入用户名')
+  if (!form.password)
+    return ElMessage.warning('请输入密码')
+  const [err] = await useAwait(userStore.login(form))
+  if (err)
+    return
+  const { id } = userStore.user
+  state.chat.world.forEach(e => e.isMe = e.from.id == id)
+  resetForm()
+}
+
+const logoutPopShow = ref(false)
+function logout() {
+  userStore.logout()
+  logoutPopShow.value = false
 }
 
 const chatListRef = ref()
 socket.connectChat({ room: 'world' }, () => {
   nextTick(() => {
-    if (!chatListRef.value || !isAutoScroll.value) return
+    if (!chatListRef.value || !isAutoScroll.value)
+      return
     chatListRef.value.scrollTop = chatListRef.value.scrollHeight
   })
 })
@@ -33,27 +67,26 @@ onUnmounted(() => socket.removeAllListeners())
 
 const isAutoScroll = ref(true)
 function scrollChat(e: any) {
-  const isBottom = e.target.scrollTop + e.target.clientHeight === e.target.scrollHeight
-  if (isBottom) {
+  const isBottom = e.target.scrollTop + e.target.clientHeight == e.target.scrollHeight
+  if (isBottom)
     isAutoScroll.value = true
-  }
   else isAutoScroll.value = false
 }
 
 const message = ref('')
 function sendMessage() {
+  if (!userStore.user.id)
+    return ElMessage.warning('请先登录')
   isAutoScroll.value = true
   socket.chat({
     room: 'world',
     text: message.value,
-  }, () => {
-    message.value = ''
-  })
+  }, () => message.value = '')
 }
 
 const list = reactive([
   { name: '聊天室', url: '/chat', bg: 'background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);' },
-  { name: '德州扑克', url: '/texas', bg: 'background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);' },
+  { name: '德州扑克', url: '/texas/hall', bg: 'background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);' },
 ])
 </script>
 
@@ -70,41 +103,95 @@ const list = reactive([
   </div>
   <!-- user盒子 -->
   <div class="pos-fixed right-30px top-30px min-w-60px flex flex-col items-center">
-    <el-avatar class="mb" size="large" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+    <div class="mb flex items-center">
+      <template v-if="!userStore.user.id">
+        <el-popover
+          placement="bottom"
+          title="注册"
+          :width="200"
+          :visible="registerPopShow"
+        >
+          <div class="flex flex-col items-end">
+            <label>用户名：<el-input v-model="form.nickname" class="mb" placeholder="请输入用户名" clearable /></label>
+            <label>密码：<el-input v-model="form.password" class="mb" placeholder="随便填" clearable /></label>
+            <div>
+              <el-button plain @click="resetForm">
+                取消
+              </el-button>
+              <el-button
+                type="primary" plain
+                @click="register"
+              >
+                注册
+              </el-button>
+            </div>
+          </div>
+          <template #reference>
+            <el-button plain @click="openRegisterPop">
+              注册
+            </el-button>
+          </template>
+        </el-popover>
+        <el-popover
+          placement="bottom"
+          title="登录"
+          :width="200"
+          :visible="loginPopShow"
+        >
+          <div class="flex flex-col items-end">
+            <label>用户名：<el-input v-model="form.nickname" class="mb" placeholder="请输入用户名" clearable /></label>
+            <label>密码：<el-input v-model="form.password" class="mb" placeholder="随便填" clearable /></label>
+            <div>
+              <el-button plain @click="resetForm">
+                取消
+              </el-button>
+              <el-button
+                type="primary" plain
+                @click="login"
+              >
+                登录
+              </el-button>
+            </div>
+          </div>
+          <template #reference>
+            <el-button type="primary" plain @click="openLoginPop">
+              登录
+            </el-button>
+          </template>
+        </el-popover>
+      </template>
+      <el-avatar class="ml" size="large" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+    </div>
 
     <el-popover
+      v-if="userStore.user.id"
       placement="bottom"
-      :title="userStore.nickname ? '修改昵称' : '昵称'"
+      title="退出登录"
       :width="200"
-      :visible="loginPopShow"
+      :visible="logoutPopShow"
     >
       <div class="flex flex-col items-end">
-        <el-input v-model="nickname" class="mb" placeholder="请输入昵称" clearable />
         <div>
-          <el-button type="danger" plain @click="loginPopShow = false">
+          <el-button type="danger" plain @click="logoutPopShow = false">
             取消
           </el-button>
           <el-button
             type="primary" plain
-            @click="login"
+            @click="logout"
           >
-            确定
+            退出登录
           </el-button>
         </div>
       </div>
       <template #reference>
         <el-button
-          v-if="userStore.nickname"
           class="pos-absolute bottom--20px right--15px"
           plain text
-          @click="editNickname"
+          @click="logoutPopShow = true"
         >
           <span class="max-w-250px min-w-60px of-hidden text-ellipsis text-center text-20px fw-bold">
-            {{ userStore.nickname }}
+            {{ userStore.user.nickname }}
           </span>
-        </el-button>
-        <el-button v-else type="primary" plain @click="loginPopShow = true">
-          登录
         </el-button>
       </template>
     </el-popover>
@@ -130,8 +217,13 @@ const list = reactive([
           <div v-if="item.isMe" class="max-w-250px rd-6px bg-#3DB578 p-8px">
             {{ item.text }}
           </div>
-          <div v-else class="max-w-250px rd-6px bg-#2C2C2C p-8px">
-            {{ item.text }}
+          <div v-else>
+            <div class="text-12px">
+              {{ item.from.nickname || '匿名' }}
+            </div>
+            <div class="max-w-250px rd-6px bg-#2C2C2C p-8px">
+              {{ item.text }}
+            </div>
           </div>
         </li>
       </ul>

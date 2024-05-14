@@ -1,8 +1,8 @@
 import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import postcssNesting from 'postcss-nesting'
-import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
 import Components from 'unplugin-vue-components/vite'
 import Icons from 'unplugin-icons/vite'
@@ -15,6 +15,8 @@ import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import Unocss from 'unocss/vite'
 // import Shiki from 'markdown-it-shiki'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { VueRouterAutoImports } from 'unplugin-vue-router'
+import VueRouter from 'unplugin-vue-router/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,11 +26,13 @@ export default defineConfig({
     },
   },
   plugins: [
-    vue(),
-    // https://github.com/hannoeru/vite-plugin-pages
-    Pages({
-      extensions: ['vue', 'md'],
+    VueRouter({
+      extensions: ['.vue', '.md'],
+      dts: 'src/types/typed-router.d.ts',
     }),
+
+    vue(),
+    vueJsx(),
 
     // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
     Layouts(),
@@ -38,9 +42,14 @@ export default defineConfig({
       imports: [
         unheadVueComposablesImports,
         'vue',
-        'vue-router',
         'vue-i18n',
         '@vueuse/core',
+        unheadVueComposablesImports,
+        VueRouterAutoImports,
+        {
+          // add any other imports you were relying on
+          'vue-router/auto': ['useLink'],
+        },
       ],
       dts: 'src/types/auto-imports.d.ts',
       dirs: [

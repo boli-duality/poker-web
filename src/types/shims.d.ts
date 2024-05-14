@@ -19,3 +19,10 @@ declare module '*.vue' {
 }
 
 declare module 'postcss-nesting'
+
+interface ImportMetaEnv {
+  /** 基础请求地址 */
+  readonly VITE_BASE_API: string
+  /** websocket地址 */
+  readonly VITE_WS_API: string
+}

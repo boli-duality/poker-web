@@ -1,19 +1,32 @@
 import { defineStore } from 'pinia'
-import { uuidV4 } from '~/libs/functions'
+import { apiUserLogin, apiUserRegister } from '~/apis/user'
 
 export const useUserStore = defineStore('user', () => {
-  const id = ref(uuidV4())
+  const user = ref({
+    id: '',
+    nickname: '',
+  })
+  function resetUser() {
+    user.value = { id: '', nickname: '' }
+  }
 
-  const nickname = ref('')
+  async function register(params: API.User.RegisterParams) {
+    const [err, res] = await useAwait(apiUserRegister(params))
+    if (err)
+      throw err
+    user.value = res
+  }
 
-  function login(name: string) {
-    nickname.value = name
+  async function login(params: API.User.LoginParams) {
+    const [err, res] = await useAwait(apiUserLogin(params))
+    if (err)
+      throw err
+    user.value = res
   }
 
   function logout() {
-    nickname.value = ''
-    id.value = ''
+    resetUser()
   }
 
-  return { nickname, id, login, logout }
+  return { user, register, login, logout }
 }, { persist: true })

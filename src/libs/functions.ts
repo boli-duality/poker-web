@@ -23,7 +23,8 @@ export function uuidV4(length: number = 36) {
 
 /** 扩展console.log, 设置打印的标签和附带行号 */
 export function logLabel(title: string, background: string = 'green') {
-  if (background === 'error') background = '#ff4d4f'
+  if (background === 'error')
+    background = '#ff4d4f'
   const color = tinycolor(background).isLight() ? 'black' : 'white'
   const style = `color:${color};background:${background};padding:2px 5px;border-radius:4px;`
   const label = [`%c${title}`, style]
@@ -40,20 +41,23 @@ export function useInterval(handler: () => void, { unload = true } = {}) {
     /** 开始定时器 */
     start(timeout?: number | undefined, { immediate = true } = {}) {
       this.stop()
-      if (immediate) handler()
+      if (immediate)
+        handler()
       this.id = window.setInterval(handler, timeout)
       this.active = !!this.id
     },
     /** 清除定时器 */
     stop() {
-      if (!this.active) return
+      if (!this.active)
+        return
       clearInterval(this.id)
       this.id = 0
       this.active = false
     },
   }
 
-  if (unload) onUnmounted(() => manager.stop())
+  if (unload)
+    onUnmounted(() => manager.stop())
 
   return manager
 }
@@ -66,19 +70,22 @@ export function useTimeout(handler: () => void, { unload = true } = {}) {
     active: false,
     start(timeout?: number | undefined, { immediate = false } = {}) {
       this.stop()
-      if (immediate) handler()
+      if (immediate)
+        handler()
       this.id = window.setTimeout(handler, timeout)
       this.active = !!this.id
     },
     stop() {
-      if (!this.active) return
+      if (!this.active)
+        return
       clearTimeout(this.id)
       this.id = 0
       this.active = false
     },
   }
 
-  if (unload) onUnmounted(() => manager.stop())
+  if (unload)
+    onUnmounted(() => manager.stop())
 
   return manager
 }
@@ -93,15 +100,18 @@ export function useCountDown(handler: (countdown: number) => void, { unload = tr
     start(countdown: number, { immediate = true } = {}) {
       this.stop()
       this.countdown = countdown
-      if (immediate) handler(this.countdown)
+      if (immediate)
+        handler(this.countdown)
       this.id = window.setInterval(() => {
-        if (this.countdown > 0) handler(--this.countdown)
+        if (this.countdown > 0)
+          handler(--this.countdown)
         else this.stop()
       }, 1000)
       this.active = !!this.id
     },
     stop() {
-      if (!this.active) return
+      if (!this.active)
+        return
       clearInterval(this.id)
       this.id = 0
       this.active = false
@@ -109,7 +119,8 @@ export function useCountDown(handler: (countdown: number) => void, { unload = tr
     },
   })
 
-  if (unload) onUnmounted(() => manager.stop())
+  if (unload)
+    onUnmounted(() => manager.stop())
 
   return manager
 }

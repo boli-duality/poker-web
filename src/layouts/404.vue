@@ -4,10 +4,10 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <main class="pt100 dfc jcc aic">
-    <div class="i-carbon-warning fz200 c-#e5a146" />
+  <main class="flex flex-col items-center justify-center pt-100px">
+    <div class="i-carbon-warning text-200px c-#e5a146" />
     <RouterView />
-    <button class="w200 h50 rad50 fz18 c-#fff bgc-#09f" @click="router.back()">
+    <button class="h-50px w-200px rd-50px bg-#09f text-18px c-#fff" @click="router.back()">
       {{ t('button.back') }}
     </button>
   </main>
